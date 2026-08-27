@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Birthday Gift Tracker</title>
+    <script>
+      // GitHub Pages has no server-side rewrite, so a deep link like
+      // /birthdayPresentTracker/settings lands here. Stash the requested path
+      // in the query string and bounce to index.html, which restores it.
+      (function () {
+        var segmentsToKeep = 1; // project page: keep "/birthdayPresentTracker"
+        var l = window.location;
+        var base = l.pathname.split('/').slice(0, 1 + segmentsToKeep).join('/');
+        var rest = l.pathname.slice(base.length).replace(/^\//, '');
+        l.replace(
+          l.protocol +
+            '//' +
+            l.host +
+            base +
+            '/?p=/' +
+            rest +
+            (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+            l.hash
+        );
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>

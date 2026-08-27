@@ -1,0 +1,71 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never run two deploys at once, but let a queued one finish rather than cancel.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build static site
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_GOOGLE_CLIENT_ID: ${{ vars.VITE_GOOGLE_CLIENT_ID }}
+
+      - name: Fail if the client ID is missing or still a placeholder
+        run: |
+          if grep -rqF "your-client-id.apps.googleusercontent.com" dist/assets; then
+            echo "::error::VITE_GOOGLE_CLIENT_ID is the .env.example placeholder; Google will reject sign-in."
+            exit 1
+          fi
+          if ! grep -rqE "[A-Za-z0-9_-]+\.apps\.googleusercontent\.com" dist/assets; then
+            echo "::error::VITE_GOOGLE_CLIENT_ID repository variable is not set; the deployed app cannot sign in."
+            exit 1
+          fi
+          echo "Client ID present in bundle."
+
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

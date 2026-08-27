@@ -1,0 +1,243 @@
+@import "tailwindcss";
+
+/*
+ * Every colour is a token so the three palettes can re-point the same names.
+ * Values here are the light "coral" defaults; the blocks below override them
+ * per palette and per light/dark. Utilities always read var(--color-*), so
+ * nothing needs restating in markup.
+ */
+@theme {
+  --color-background: oklch(98.5% 0.008 60);
+  --color-foreground: oklch(26% 0.02 20);
+  --color-muted: oklch(95% 0.02 60);
+  --color-muted-foreground: oklch(48% 0.02 30);
+  --color-primary: oklch(72% 0.13 22);
+  --color-primary-foreground: oklch(22% 0.02 20);
+  --color-accent: oklch(92% 0.11 95);
+  --color-accent-foreground: oklch(28% 0.04 60);
+  --color-success: oklch(85% 0.07 178);
+  --color-success-foreground: oklch(26% 0.04 190);
+  --color-border: oklch(89% 0.02 40);
+  --color-card: oklch(100% 0 0);
+  --color-card-foreground: oklch(24% 0.02 20);
+  --color-today: oklch(60% 0.2 25);
+
+  /* The four palette colours, used to tint individual rows. */
+  --color-p1: #f38181;
+  --color-p2: #fce38a;
+  --color-p3: #eaffd0;
+  --color-p4: #95e1d3;
+  --color-tint-foreground: oklch(28% 0.03 40);
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+
+  --shadow-card: 0 1px 2px oklch(0% 0 0 / 0.05), 0 8px 24px -12px oklch(0% 0 0 / 0.18);
+  --shadow-raised: 0 2px 4px oklch(0% 0 0 / 0.06), 0 14px 32px -14px oklch(0% 0 0 / 0.28);
+  --shadow-inset: inset 0 1px 0 oklch(100% 0 0 / 0.5);
+}
+
+/* Gradient stops for the page backdrop — the main source of depth. */
+:root {
+  --tint-a: #eaffd0;
+  --tint-b: #95e1d3;
+  --tint-c: #f38181;
+}
+
+/* ---------- Palette: coral (F38181 FCE38A EAFFD0 95E1D3) ---------- */
+:root[data-palette='coral'] {
+  --tint-a: #eaffd0;
+  --tint-b: #95e1d3;
+  --tint-c: #f38181;
+  --color-primary: #f38181;
+  --color-primary-foreground: #3a1f1f;
+  --color-accent: #fce38a;
+  --color-accent-foreground: #4a3c12;
+  --color-success: #95e1d3;
+  --color-success-foreground: #14413a;
+  --color-today: #e35d5d;
+  --color-p1: #f38181;
+  --color-p2: #fce38a;
+  --color-p3: #eaffd0;
+  --color-p4: #95e1d3;
+  --color-tint-foreground: #3a2020;
+}
+
+/* ---------- Palette: citrus (70FFD2 FFFC8C FFCC4D FF9137) ---------- */
+:root[data-palette='citrus'] {
+  --tint-a: #fffc8c;
+  --tint-b: #70ffd2;
+  --tint-c: #ff9137;
+  --color-background: oklch(98.5% 0.015 100);
+  --color-muted: oklch(95% 0.035 100);
+  --color-muted-foreground: oklch(47% 0.03 70);
+  --color-border: oklch(89% 0.03 95);
+  --color-primary: #ff9137;
+  --color-primary-foreground: #3d1c00;
+  --color-accent: #ffcc4d;
+  --color-accent-foreground: #422f00;
+  --color-success: #70ffd2;
+  --color-success-foreground: #063d2e;
+  --color-today: #ff6a2b;
+  --color-p1: #70ffd2;
+  --color-p2: #fffc8c;
+  --color-p3: #ffcc4d;
+  --color-p4: #ff9137;
+  --color-tint-foreground: #3d2200;
+}
+
+/* ---------- Palette: pastel (A8D8EA AA96DA FCBAD3 FFFFD2) ---------- */
+:root[data-palette='pastel'] {
+  --tint-a: #ffffd2;
+  --tint-b: #a8d8ea;
+  --tint-c: #aa96da;
+  --color-background: oklch(98.5% 0.008 280);
+  --color-muted: oklch(95% 0.02 280);
+  --color-muted-foreground: oklch(48% 0.03 285);
+  --color-border: oklch(90% 0.02 280);
+  --color-primary: #aa96da;
+  --color-primary-foreground: #221436;
+  --color-accent: #fcbad3;
+  --color-accent-foreground: #46182b;
+  --color-success: #a8d8ea;
+  --color-success-foreground: #10333f;
+  --color-today: #d16a93;
+  --color-p1: #a8d8ea;
+  --color-p2: #aa96da;
+  --color-p3: #fcbad3;
+  --color-p4: #ffffd2;
+  --color-tint-foreground: #23193a;
+}
+
+/* ---------- Dark mode: neutral surfaces, palette kept for accents ---------- */
+:root.dark {
+  --color-background: oklch(19% 0.015 260);
+  --color-foreground: oklch(96% 0.005 260);
+  --color-muted: oklch(26% 0.018 260);
+  --color-muted-foreground: oklch(74% 0.015 260);
+  --color-border: oklch(31% 0.018 260);
+  --color-card: oklch(23% 0.018 260);
+  --color-card-foreground: oklch(96% 0.005 260);
+
+  --shadow-card: 0 1px 2px oklch(0% 0 0 / 0.4), 0 10px 28px -14px oklch(0% 0 0 / 0.7);
+  --shadow-raised: 0 2px 6px oklch(0% 0 0 / 0.5), 0 18px 40px -16px oklch(0% 0 0 / 0.8);
+  --shadow-inset: inset 0 1px 0 oklch(100% 0 0 / 0.06);
+}
+
+:root.dark[data-palette='coral'] {
+  --color-background: oklch(20% 0.02 20);
+  --color-card: oklch(24% 0.022 20);
+  --color-border: oklch(32% 0.025 20);
+}
+
+:root.dark[data-palette='citrus'] {
+  --color-background: oklch(20% 0.02 80);
+  --color-card: oklch(24% 0.022 80);
+  --color-border: oklch(32% 0.028 80);
+}
+
+:root.dark[data-palette='pastel'] {
+  --color-background: oklch(20% 0.02 285);
+  --color-card: oklch(24% 0.022 285);
+  --color-border: oklch(32% 0.025 285);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    margin: 0;
+    min-height: 100vh;
+    /* Two soft colour washes anchored to opposite corners, fixed so they do
+       not slide while the list scrolls. */
+    background-image:
+      radial-gradient(60rem 40rem at 12% -10%, color-mix(in oklab, var(--tint-b) 40%, transparent), transparent 65%),
+      radial-gradient(52rem 36rem at 96% 4%, color-mix(in oklab, var(--tint-c) 26%, transparent), transparent 62%),
+      radial-gradient(70rem 48rem at 50% 108%, color-mix(in oklab, var(--tint-a) 45%, transparent), transparent 68%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
+
+  :root.dark body {
+    background-image:
+      radial-gradient(60rem 40rem at 12% -10%, color-mix(in oklab, var(--tint-b) 12%, transparent), transparent 65%),
+      radial-gradient(52rem 36rem at 96% 4%, color-mix(in oklab, var(--tint-c) 10%, transparent), transparent 62%),
+      radial-gradient(70rem 48rem at 50% 108%, color-mix(in oklab, var(--tint-a) 10%, transparent), transparent 68%);
+  }
+}
+
+@layer components {
+  /* Slight lift on hover, so rows read as physical objects rather than text. */
+  .lift {
+    transition:
+      transform 150ms ease,
+      box-shadow 150ms ease,
+      border-color 150ms ease;
+  }
+
+  .lift:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-raised);
+  }
+
+  .lift:active {
+    transform: translateY(0);
+  }
+}
+
+@layer components {
+  /*
+   * Each row picks one of the four palette colours. The tint drives a left
+   * rail, a wash across the row and the avatar, so switching palette visibly
+   * repaints the list rather than only the page backdrop.
+   */
+  .row-tint-1 {
+    --row-tint: var(--color-p1);
+  }
+  .row-tint-2 {
+    --row-tint: var(--color-p2);
+  }
+  .row-tint-3 {
+    --row-tint: var(--color-p3);
+  }
+  .row-tint-4 {
+    --row-tint: var(--color-p4);
+  }
+
+  .birthday-row {
+    border-left: 4px solid var(--row-tint);
+    background-image: linear-gradient(
+      100deg,
+      color-mix(in oklab, var(--row-tint) 24%, transparent),
+      color-mix(in oklab, var(--row-tint) 6%, transparent) 55%,
+      transparent 85%
+    );
+  }
+
+  .birthday-row:hover {
+    background-image: linear-gradient(
+      100deg,
+      color-mix(in oklab, var(--row-tint) 38%, transparent),
+      color-mix(in oklab, var(--row-tint) 12%, transparent) 60%,
+      transparent 90%
+    );
+  }
+
+  :root.dark .birthday-row {
+    background-image: linear-gradient(
+      100deg,
+      color-mix(in oklab, var(--row-tint) 20%, transparent),
+      color-mix(in oklab, var(--row-tint) 5%, transparent) 55%,
+      transparent 85%
+    );
+  }
+
+  .birthday-avatar {
+    background: var(--row-tint);
+    color: var(--color-tint-foreground);
+  }
+}

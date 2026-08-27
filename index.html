@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Track birthdays from Google Calendar and remember who already got a gift. Runs entirely in your browser." />
+    <meta name="theme-color" content="#111111" />
+    <link rel="preconnect" href="https://accounts.google.com" />
+    <link rel="preconnect" href="https://www.googleapis.com" />
+    <title>Birthday Gift Tracker</title>
+    <script>
+      // Companion to public/404.html: turn ?p=/settings back into a real path
+      // before React Router boots, so deep links survive a GitHub Pages 404.
+      (function () {
+        var search = window.location.search;
+        if (search.indexOf('?p=/') !== 0) return;
+        var params = search.slice(1).split('&');
+        var path = '';
+        var query = '';
+        for (var i = 0; i < params.length; i += 1) {
+          if (params[i].indexOf('p=') === 0) path = decodeURIComponent(params[i].slice(2));
+          else if (params[i].indexOf('q=') === 0)
+            query = '?' + decodeURIComponent(params[i].slice(2)).replace(/~and~/g, '&');
+        }
+        var base = window.location.pathname.replace(/\/$/, '');
+        window.history.replaceState(null, '', base + path + query + window.location.hash);
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
