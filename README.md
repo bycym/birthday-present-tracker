@@ -85,9 +85,19 @@ on every push to `main`.
 One-time repository setup:
 
 1. **Settings → Pages → Build and deployment → Source**: `GitHub Actions`.
-2. **Settings → Secrets and variables → Actions → Variables**: add a repository variable
-   `VITE_GOOGLE_CLIENT_ID` with your OAuth client ID. It is a public identifier, not a secret,
-   but it must be injected at build time — the deploy job fails loudly if it is missing.
+2. **Settings → Environments → `prod`**: add `VITE_GOOGLE_CLIENT_ID` with your OAuth client ID.
+   A variable is the natural fit (it is a public identifier, not a secret), but the workflow
+   accepts either a variable or a secret.
+
+   The **build** job in `deploy.yml` declares `environment: prod`, because environment values
+   only resolve in a job that claims that environment — and the build is where the value is
+   baked into the bundle. If `prod` has required reviewers or a wait timer, the build waits on
+   them before running. The deploy job keeps its own `github-pages` environment, which
+   `actions/deploy-pages` requires.
+
+   `ci.yml` deliberately builds *without* the client ID: claiming `prod` there would make every
+   pull request wait on that environment's protection rules, and nothing in lint, type-check or
+   test needs a real value. `deploy.yml` fails loudly if it is missing or still the placeholder.
 3. If you fork or rename the repo, update `base` in [`vite.config.ts`](vite.config.ts) to match
    the new repo name.
 

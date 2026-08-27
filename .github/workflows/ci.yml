@@ -29,10 +29,12 @@ jobs:
         run: npm run lint
 
       - name: Type-check and build
+        # Deliberately built without VITE_GOOGLE_CLIENT_ID. The value lives in
+        # the `prod` environment, and claiming that environment here would make
+        # every pull request wait on its protection rules. Nothing in lint,
+        # type-check or test needs a real client ID — the missing value is only
+        # detected at runtime — and deploy.yml fails loudly if it is absent.
         run: npm run build
-        env:
-          # The OAuth client ID is public by design; keep it in a repo variable.
-          VITE_GOOGLE_CLIENT_ID: ${{ vars.VITE_GOOGLE_CLIENT_ID }}
 
       - name: Test
         run: npm run test

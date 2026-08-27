@@ -19,6 +19,10 @@ jobs:
   build:
     name: Build static site
     runs-on: ubuntu-latest
+    # The client ID lives in the `prod` environment, and environment variables
+    # only resolve in a job that declares that environment. The build is where
+    # the value gets baked into the bundle, so it has to be declared here.
+    environment: prod
 
     steps:
       - uses: actions/checkout@v4
@@ -37,7 +41,10 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_GOOGLE_CLIENT_ID: ${{ vars.VITE_GOOGLE_CLIENT_ID }}
+          # An OAuth client ID is a public identifier, so it belongs in an
+          # environment variable — but accept a secret too, since either is a
+          # reasonable place to have put it.
+          VITE_GOOGLE_CLIENT_ID: ${{ vars.VITE_GOOGLE_CLIENT_ID || secrets.VITE_GOOGLE_CLIENT_ID }}
 
       - name: Fail if the client ID is missing or still a placeholder
         run: |
@@ -46,11 +53,10 @@ jobs:
             exit 1
           fi
           if ! grep -rqE "[A-Za-z0-9_-]+\.apps\.googleusercontent\.com" dist/assets; then
-            echo "::error::VITE_GOOGLE_CLIENT_ID repository variable is not set; the deployed app cannot sign in."
+            echo "::error::VITE_GOOGLE_CLIENT_ID is not set in the 'prod' environment (as a variable or a secret); the deployed app cannot sign in."
             exit 1
           fi
           echo "Client ID present in bundle."
-
 
       - uses: actions/configure-pages@v5
 
