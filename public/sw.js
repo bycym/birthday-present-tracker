@@ -1,13 +1,17 @@
 /* Minimal app-shell cache so the app keeps working offline after the first load.
    Google API calls are deliberately never cached — they need a live token. */
-const CACHE = 'bgt-shell-v1'
-const SHELL = [self.registration.scope, `${self.registration.scope}index.html`]
+
+const CACHE_PREFIX = 'bgt-shell-'
+// registerServiceWorker appends ?v=<build id>, so each deploy gets its own cache.
+const BUILD = new URLSearchParams(self.location.search).get('v') || 'dev'
+const CACHE = `${CACHE_PREFIX}${BUILD}`
+const INDEX_URL = `${self.registration.scope}index.html`
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches
       .open(CACHE)
-      .then((cache) => cache.addAll(SHELL))
+      .then((cache) => cache.addAll([self.registration.scope, INDEX_URL]))
       .catch(() => undefined)
       .then(() => self.skipWaiting()),
   )
@@ -17,9 +21,21 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key))))
+      .then((keys) =>
+        Promise.all(
+          keys
+            // Drop every previous build's shell, so a stale index.html can never
+            // be served pointing at asset hashes that no longer exist.
+            .filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE)
+            .map((key) => caches.delete(key)),
+        ),
+      )
       .then(() => self.clients.claim()),
   )
+})
+
+self.addEventListener('message', (event) => {
+  if (event.data === 'skip-waiting') self.skipWaiting()
 })
 
 self.addEventListener('fetch', (event) => {
@@ -35,10 +51,10 @@ self.addEventListener('fetch', (event) => {
       fetch(request)
         .then((response) => {
           const copy = response.clone()
-          caches.open(CACHE).then((cache) => cache.put(`${self.registration.scope}index.html`, copy))
+          caches.open(CACHE).then((cache) => cache.put(INDEX_URL, copy))
           return response
         })
-        .catch(() => caches.match(`${self.registration.scope}index.html`)),
+        .catch(() => caches.match(INDEX_URL)),
     )
     return
   }

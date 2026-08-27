@@ -11,6 +11,9 @@ export default defineConfig({
   base: '/birthdayPresentTracker/',
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
+    // Changes on every build, so the service worker gets a new cache name and
+    // a byte-different script URL — old shells cannot outlive a deploy.
+    __BUILD_ID__: JSON.stringify(Date.now().toString(36)),
   },
   plugins: [react(), tailwindcss()],
   build: {

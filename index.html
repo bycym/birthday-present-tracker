@@ -31,5 +31,83 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      /* Boot watchdog, written in ES5 on purpose so it runs even when the module
+         bundle fails to parse or 404s. React's error boundary cannot help there,
+         because React never starts — the symptom is a blank white page. */
+      (function () {
+        var firstError = null;
+
+        window.addEventListener('error', function (event) {
+          if (!firstError) {
+            firstError =
+              (event.message || 'Script error') +
+              (event.filename ? '\n' + event.filename + ':' + event.lineno : '');
+          }
+        });
+
+        window.addEventListener('unhandledrejection', function (event) {
+          if (!firstError) firstError = 'Unhandled promise rejection: ' + event.reason;
+        });
+
+        function clearAndReload() {
+          var done = function () {
+            window.location.reload();
+          };
+          try {
+            var jobs = [];
+            if (navigator.serviceWorker) {
+              jobs.push(
+                navigator.serviceWorker.getRegistrations().then(function (rs) {
+                  return Promise.all(
+                    rs.map(function (r) {
+                      return r.unregister();
+                    })
+                  );
+                })
+              );
+            }
+            if (window.caches) {
+              jobs.push(
+                caches.keys().then(function (keys) {
+                  return Promise.all(
+                    keys.map(function (k) {
+                      return caches.delete(k);
+                    })
+                  );
+                })
+              );
+            }
+            Promise.all(jobs).then(done, done);
+          } catch (e) {
+            done();
+          }
+        }
+
+        function check() {
+          var root = document.getElementById('root');
+          if (root && root.children.length > 0) return;
+
+          root.innerHTML =
+            '<div style="font:14px/1.5 system-ui,sans-serif;max-width:40rem;margin:0 auto;padding:1.5rem">' +
+            '<h1 style="font-size:1.25rem">The app did not start</h1>' +
+            '<p>This usually means an old cached copy is still installed on this device.</p>' +
+            '<pre id="boot-error" style="white-space:pre-wrap;word-break:break-word;overflow-x:auto;' +
+            'border:1px solid #ccc;border-radius:8px;padding:1rem;font-size:12px"></pre>' +
+            '<button id="boot-reset" style="padding:.5rem 1rem;border:1px solid #ccc;border-radius:8px;' +
+            'background:#fff;font:inherit">Clear cached app and reload</button>' +
+            '</div>';
+
+          document.getElementById('boot-error').textContent =
+            firstError || 'No error was reported. The app bundle may have failed to load.';
+          document.getElementById('boot-reset').addEventListener('click', clearAndReload);
+        }
+
+        // Give the module bundle a fair chance to mount before declaring failure.
+        window.addEventListener('load', function () {
+          setTimeout(check, 4000);
+        });
+      })();
+    </script>
   </body>
 </html>
