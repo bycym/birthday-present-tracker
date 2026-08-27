@@ -4,6 +4,12 @@ Privacy-first web app that reads birthdays from your Google Calendars and tracks
 got a gift this year. No backend: it is a static site hosted on GitHub Pages, and every gift
 record lives in your own browser's IndexedDB.
 
+Free to use on [github pagelink](https://bycym.github.io/birthday-present-tracker/).
+DM me if you like to added to the test env for testing.
+
+![alt text](screenshot-1.png)
+![alt text](screenshot-2.png)
+
 ## Local development
 
 ```bash
