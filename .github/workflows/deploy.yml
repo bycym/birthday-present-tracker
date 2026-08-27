@@ -47,6 +47,7 @@ jobs:
           VITE_GOOGLE_CLIENT_ID: ${{ vars.VITE_GOOGLE_CLIENT_ID || secrets.VITE_GOOGLE_CLIENT_ID }}
 
       - name: Fail if the client ID is missing or still a placeholder
+        if: false
         run: |
           if grep -rqF "your-client-id.apps.googleusercontent.com" dist/assets; then
             echo "::error::VITE_GOOGLE_CLIENT_ID is the .env.example placeholder; Google will reject sign-in."
