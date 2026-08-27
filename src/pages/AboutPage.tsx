@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { GOOGLE_SCOPES } from '@/auth/googleAuth'
 
-const REPO_URL = 'https://github.com/arcsibo/birthdayPresentTracker'
+const REPO_URL = 'https://github.com/bycym/birthday-present-tracker'
 
 export function AboutPage() {
   return (

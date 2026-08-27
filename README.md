@@ -9,7 +9,7 @@ record lives in your own browser's IndexedDB.
 ```bash
 npm install
 cp .env.example .env       # then paste your Google OAuth client ID
-npm run dev                # http://localhost:5173/birthdayPresentTracker/
+npm run dev                # http://localhost:5173/birthday-present-tracker/
 ```
 
 | Script | Purpose |
@@ -27,7 +27,7 @@ npm run dev                # http://localhost:5173/birthdayPresentTracker/
 2. Create an OAuth 2.0 Client ID of type **Web application**.
 3. Add these **Authorized JavaScript origins**:
    - `http://localhost:5173` (local dev)
-   - `https://<your-github-user>.github.io` (GitHub Pages)
+   - `https://bycym.github.io` (GitHub Pages)
 4. No redirect URI is needed — sign-in uses the Google Identity Services token flow, which
    returns the token to the page via a popup callback.
 5. Scope requested: `https://www.googleapis.com/auth/calendar.readonly` (read-only).
@@ -98,10 +98,11 @@ One-time repository setup:
    `ci.yml` deliberately builds *without* the client ID: claiming `prod` there would make every
    pull request wait on that environment's protection rules, and nothing in lint, type-check or
    test needs a real value. `deploy.yml` fails loudly if it is missing or still the placeholder.
-3. If you fork or rename the repo, update `base` in [`vite.config.ts`](vite.config.ts) to match
-   the new repo name.
+3. `base` is derived from `GITHUB_REPOSITORY` at build time, so renaming or forking the repo
+   needs no code change. Locally it falls back to the `name` field in `package.json`, which must
+   therefore match the repository name.
 
-Deep links (`/birthdayPresentTracker/settings`) work through the standard SPA fallback:
+Deep links (`/birthday-present-tracker/settings`) work through the standard SPA fallback:
 [`public/404.html`](public/404.html) stashes the path in the query string, and a small script in
 [`index.html`](index.html) restores it before React Router boots.
 

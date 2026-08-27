@@ -7,8 +7,19 @@ import { readFileSync } from 'node:fs'
 
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf-8'))
 
+/**
+ * GitHub Pages serves a project site under /<repo>/, so the base must match the
+ * repository name exactly. Deriving it from GITHUB_REPOSITORY in CI keeps the
+ * two from drifting apart; a user site (<user>.github.io) is served at the root.
+ */
+function resolveBase(): string {
+  const repository = process.env.GITHUB_REPOSITORY?.split('/')[1]
+  if (!repository) return `/${pkg.name}/`
+  return repository.endsWith('.github.io') ? '/' : `/${repository}/`
+}
+
 export default defineConfig({
-  base: '/birthdayPresentTracker/',
+  base: resolveBase(),
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
     // Changes on every build, so the service worker gets a new cache name and
